@@ -1,0 +1,19 @@
+{
+  "build": {
+    "development": {
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "ios": {
+        "image": "latest"
+      },
+      "android": {
+        "image": "latest"
+      },
+      "distribution": "store"
+    }
+  }
+}
