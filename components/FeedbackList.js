@@ -27,10 +27,9 @@ export default function FeedbackList() {
       setLoading(true);
       
       const { user, error: userError } = await getCurrentUser();
-      if (userError) throw userError;
-      
-      if (!user) {
-        Alert.alert('Error', 'Please sign in to view your feedback');
+      if (userError || !user) {
+        // For anonymous users, show empty state
+        setFeedback([]);
         return;
       }
 
@@ -194,7 +193,7 @@ export default function FeedbackList() {
         ) : (
           <View style={styles.feedbackItems}>
             {filteredFeedback.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.feedbackCard}>
+              <View key={item.id} style={styles.feedbackCard}>
                 {/* Header */}
                 <View style={styles.feedbackHeader}>
                   <View style={styles.feedbackMeta}>
@@ -235,7 +234,7 @@ export default function FeedbackList() {
                     )}
                   </View>
                 )}
-
+              </View>
                 {/* Footer */}
                 <View style={styles.feedbackFooter}>
                   <View style={styles.feedbackInfo}>

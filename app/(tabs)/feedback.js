@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { MessageSquare, Send, CircleCheck as CheckCircle } from 'lucide-react-native';
+import { MessageSquare, Send, CircleCheck as CheckCircle, Plus } from 'lucide-react-native';
 import FeedbackForm from '../../components/FeedbackForm';
 import FeedbackList from '../../components/FeedbackList';
 import LanguageSelector from '../../components/LanguageSelector';
@@ -71,7 +71,7 @@ export default function FeedbackScreen() {
                 style={styles.feedbackButton}
                 onPress={() => setShowFeedbackForm(true)}
               >
-                <MessageSquare size={20} color="#FFFFFF" />
+                <Plus size={20} color="#FFFFFF" />
                 <Text style={styles.feedbackButtonText}>Submit Feedback</Text>
               </TouchableOpacity>
             </View>
@@ -89,7 +89,7 @@ export default function FeedbackScreen() {
         ) : (
           <FeedbackList />
         )}
-          </View>
+      </View>
 
       <FeedbackForm
         visible={showFeedbackForm}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Modal } from 'react-native';
-import { MessageSquare, Send, X } from 'lucide-react-native';
+import { MessageSquare, Send, X, Star } from 'lucide-react-native';
 import { createFeedback, getCurrentUser } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { showSuccessToast, showErrorToast } from './Toast';
@@ -13,6 +13,7 @@ export default function FeedbackForm({ visible, onClose, issueId = null }) {
     message: '',
     contactEmail: '',
     contactPhone: '',
+    priority: 'medium',
   });
   const [loading, setLoading] = useState(false);
 
@@ -21,6 +22,12 @@ export default function FeedbackForm({ visible, onClose, issueId = null }) {
     { id: 'suggestion', label: 'Suggestion', color: '#10B981' },
     { id: 'compliment', label: 'Compliment', color: '#8B5CF6' },
     { id: 'inquiry', label: 'General Inquiry', color: '#F59E0B' },
+  ];
+
+  const priorities = [
+    { id: 'low', label: 'Low', color: '#10B981' },
+    { id: 'medium', label: 'Medium', color: '#F59E0B' },
+    { id: 'high', label: 'High', color: '#EF4444' },
   ];
 
   const handleSubmit = async () => {
@@ -41,6 +48,7 @@ export default function FeedbackForm({ visible, onClose, issueId = null }) {
         type: formData.type,
         subject: formData.subject,
         message: formData.message,
+        priority: formData.priority,
         contact_email: formData.contactEmail || user?.email,
         contact_phone: formData.contactPhone,
         status: 'pending',
@@ -61,6 +69,7 @@ export default function FeedbackForm({ visible, onClose, issueId = null }) {
         message: '',
         contactEmail: '',
         contactPhone: '',
+        priority: 'medium',
       });
       onClose();
 
@@ -104,6 +113,33 @@ export default function FeedbackForm({ visible, onClose, issueId = null }) {
                     ]}
                   >
                     {type.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Priority Selection */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Priority Level</Text>
+            <View style={styles.priorityContainer}>
+              {priorities.map((priority) => (
+                <TouchableOpacity
+                  key={priority.id}
+                  style={[
+                    styles.priorityButton,
+                    formData.priority === priority.id && styles.priorityButtonActive,
+                    { borderColor: priority.color },
+                  ]}
+                  onPress={() => setFormData({ ...formData, priority: priority.id })}
+                >
+                  <Text
+                    style={[
+                      styles.priorityText,
+                      formData.priority === priority.id && { color: priority.color },
+                    ]}
+                  >
+                    {priority.label}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -230,6 +266,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F9FF',
   },
   typeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  priorityContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  priorityButton: {
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 2,
+    borderRadius: 16,
+    borderColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+  },
+  priorityButtonActive: {
+    backgroundColor: '#F0F9FF',
+  },
+  priorityText: {
     fontSize: 12,
     fontWeight: '500',
     color: '#6B7280',
