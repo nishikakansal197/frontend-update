@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, RefreshControl } from 'react-native';
 import { MessageSquare, Clock, CircleCheck as CheckCircle, TriangleAlert as AlertTriangle, MessageCircle, Send, Filter, Search } from 'lucide-react-native';
-import { supabase } from '../lib/supabase';
+import { getAllFeedback, updateFeedbackStatus } from '../lib/supabase';
 
 export default function AdminFeedbackSection() {
   const [feedback, setFeedback] = useState([]);
@@ -28,17 +28,7 @@ export default function AdminFeedbackSection() {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase
-        .from('feedback')
-        .select(`
-          *,
-          profiles:user_id (
-            full_name,
-            email,
-            user_type
-          )
-        `)
-        .order('created_at', { ascending: false });
+      const { data, error } = await getAllFeedback();
 
       if (error) throw error;
       setFeedback(data || []);
@@ -58,13 +48,7 @@ export default function AdminFeedbackSection() {
 
   const handleUpdateStatus = async (feedbackId, newStatus) => {
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ 
-          status: newStatus,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', feedbackId);
+      const { error } = await updateFeedbackStatus(feedbackId, newStatus);
 
       if (error) throw error;
       
@@ -85,15 +69,7 @@ export default function AdminFeedbackSection() {
     try {
       setResponding(true);
       
-      const { error } = await supabase
-        .from('feedback')
-        .update({
-          admin_response: responseText,
-          status: 'responded',
-          responded_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', feedbackId);
+      const { error } = await updateFeedbackStatus(feedbackId, 'responded', responseText);
 
       if (error) throw error;
 
